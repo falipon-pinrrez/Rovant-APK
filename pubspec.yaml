@@ -20,7 +20,7 @@ dependencies:
   latlong2: ^0.9.1
   geolocator: ^13.0.2
   # Audio: grabar, reproducir y voz
-  record: ^5.2.0
+  record: ^6.1.1
   audioplayers: ^6.1.0
   flutter_tts: ^4.2.0
   # Fotos y compartir
