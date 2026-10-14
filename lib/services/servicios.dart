@@ -156,14 +156,15 @@ class Lugar {
 }
 
 /// Búsqueda de destinos (OpenStreetMap Nominatim), priorizando cerca de ti.
-Future<List<Lugar>> buscarLugares(String q, LatLng? cerca) async {
+Future<List<Lugar>> buscarLugares(String q, LatLng? cerca, {bool soloCerca = false}) async {
   try {
     var url = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=8'
         '&accept-language=es&q=${Uri.encodeQueryComponent(q)}';
     if (cerca != null) {
-      const d = 0.5;
+      final d = soloCerca ? 0.05 : 0.5; // ~5 km o ~50 km
       url += '&viewbox=${cerca.longitude - d},${cerca.latitude + d},'
           '${cerca.longitude + d},${cerca.latitude - d}';
+      if (soloCerca) url += '&bounded=1';
     }
     final res = await http.get(Uri.parse(url), headers: {'User-Agent': _ua}).timeout(
         const Duration(seconds: 8));

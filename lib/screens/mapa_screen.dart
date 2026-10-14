@@ -394,14 +394,14 @@ class _MapaScreenState extends State<MapaScreen> {
                   width: 44,
                   height: 44,
                   alignment: Alignment.topCenter,
-                  child: Icon(Icons.flag_rounded, color: c.accion, size: 40),
+                  child: Image.asset('assets/iconos/bandera.png', width: 40, height: 40),
                 ),
               if (_pos != null)
                 Marker(
                   point: _pos!,
                   width: 76,
                   height: 76,
-                  child: _MiMarcador(avatar: aj.avatar, rumbo: _rumbo),
+                  child: _MiMarcador(vehiculo: aj.vehiculo, rumbo: _rumbo),
                 ),
             ]),
           ],
@@ -527,8 +527,8 @@ class _MapaScreenState extends State<MapaScreen> {
 }
 
 class _MiMarcador extends StatelessWidget {
-  const _MiMarcador({required this.avatar, required this.rumbo});
-  final String avatar;
+  const _MiMarcador({required this.vehiculo, required this.rumbo});
+  final String vehiculo;
   final double rumbo;
   @override
   Widget build(BuildContext context) {
@@ -542,16 +542,10 @@ class _MiMarcador extends StatelessWidget {
       ),
       Transform.rotate(
         angle: rumbo * pi / 180,
-        child: SizedBox(
-          width: 76,
-          height: 76,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: Icon(Icons.navigation_rounded, color: c.accion, size: 20),
-          ),
-        ),
+        child: Image.asset('assets/vehiculos/$vehiculo.png', height: 54,
+            errorBuilder: (_, __, ___) =>
+                Icon(Icons.navigation_rounded, color: c.accion, size: 40)),
       ),
-      Avatar(avatar, tam: 46, anillo: c.accion),
     ]);
   }
 }
@@ -727,6 +721,21 @@ class _BotonSecundario extends StatelessWidget {
   }
 }
 
+class _Atajo {
+  const _Atajo(this.clave, this.nombre, this.icono, [this.consulta]);
+  final String clave, nombre, icono;
+  final String? consulta; // null = lugar guardado (casa / trabajo)
+}
+
+const _atajos = [
+  _Atajo('casa', 'Casa', 'casa'),
+  _Atajo('trabajo', 'Trabajo', 'trabajo'),
+  _Atajo('gas', 'Gasolinera', 'gasolina', 'gasolinera'),
+  _Atajo('parq', 'Parqueadero', 'parqueadero', 'parqueadero'),
+  _Atajo('comida', 'Restaurante', 'comida', 'restaurante'),
+  _Atajo('carga', 'Carga eléctrica', 'carga', 'estación de carga'),
+];
+
 class _BuscarSheet extends StatefulWidget {
   const _BuscarSheet({this.cerca});
   final LatLng? cerca;
@@ -735,13 +744,21 @@ class _BuscarSheet extends StatefulWidget {
 }
 
 class _BuscarSheetState extends State<_BuscarSheet> {
+  final _ctrl = TextEditingController();
   List<Lugar> _res = [];
   bool _buscando = false;
+  String? _guardando; // 'casa' o 'trabajo' mientras el usuario elige la dirección
 
-  Future<void> _go(String q) async {
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _go(String q, {bool soloCerca = false}) async {
     if (q.trim().length < 3) return;
     setState(() => _buscando = true);
-    final r = await buscarLugares(q.trim(), widget.cerca);
+    final r = await buscarLugares(q.trim(), widget.cerca, soloCerca: soloCerca);
     if (mounted) {
       setState(() {
         _res = r;
@@ -750,29 +767,97 @@ class _BuscarSheetState extends State<_BuscarSheet> {
     }
   }
 
+  void _tocarAtajo(_Atajo a) {
+    final aj = context.read<AjustesStore>();
+    if (a.consulta != null) {
+      _ctrl.text = a.consulta!;
+      _go(a.consulta!, soloCerca: widget.cerca != null);
+      return;
+    }
+    final l = aj.lugar(a.clave);
+    if (l != null) {
+      Navigator.pop(context, LatLng(l.$1, l.$2));
+    } else {
+      setState(() {
+        _guardando = a.clave;
+        _res = [];
+      });
+    }
+  }
+
+  void _elegir(Lugar l) {
+    if (_guardando != null) {
+      context
+          .read<AjustesStore>()
+          .guardarLugar(_guardando!, l.punto.latitude, l.punto.longitude, l.nombre);
+    }
+    Navigator.pop(context, l.punto);
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = context.rs;
+    final aj = context.watch<AjustesStore>();
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SafeArea(
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.7,
+          height: MediaQuery.of(context).size.height * 0.75,
           child: Column(children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
               child: TextField(
-                autofocus: true,
+                controller: _ctrl,
+                autofocus: _guardando == null,
                 textInputAction: TextInputAction.search,
-                onSubmitted: _go,
+                onSubmitted: (q) => _go(q),
                 decoration: InputDecoration(
-                  hintText: 'Busca una dirección o lugar',
+                  hintText: _guardando == null
+                      ? 'Busca una dirección o lugar'
+                      : 'Escribe la dirección de tu ${_guardando == 'casa' ? 'casa' : 'trabajo'}',
                   prefixIcon: const Icon(Icons.search_rounded),
                   filled: true,
                   fillColor: c.elevada,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100), borderSide: BorderSide.none),
                 ),
+              ),
+            ),
+            SizedBox(
+              height: 92,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                children: [
+                  for (final a in _atajos)
+                    GestureDetector(
+                      onTap: () => _tocarAtajo(a),
+                      onLongPress: a.consulta == null && aj.lugar(a.clave) != null
+                          ? () {
+                              aj.borrarLugar(a.clave);
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text('${a.nombre} borrado. Tócalo para guardarlo de nuevo.')));
+                            }
+                          : null,
+                      child: Container(
+                        width: 82,
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _guardando == a.clave ? c.suave : c.elevada,
+                          borderRadius: BorderRadius.circular(RS.r14),
+                        ),
+                        child: Column(children: [
+                          Image.asset('assets/iconos/${a.icono}.png', width: 36, height: 36),
+                          const SizedBox(height: 6),
+                          Text(a.nombre,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                        ]),
+                      ),
+                    ),
+                ],
               ),
             ),
             if (_buscando) const LinearProgressIndicator(minHeight: 2),
@@ -782,7 +867,9 @@ class _BuscarSheetState extends State<_BuscarSheet> {
                       child: Padding(
                         padding: const EdgeInsets.all(24),
                         child: Text(
-                            'Escribe y presiona buscar.\nTambién puedes mantener presionado el mapa para elegir un destino.',
+                            _guardando != null
+                                ? 'Busca la dirección y tócala para guardarla como ${_guardando == 'casa' ? 'Casa' : 'Trabajo'}.'
+                                : 'Escribe y presiona buscar, o usa un atajo.\nTambién puedes mantener presionado el mapa para elegir un destino.',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: c.texto2)),
                       ),
@@ -798,7 +885,7 @@ class _BuscarSheetState extends State<_BuscarSheet> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(color: c.texto2)),
-                        onTap: () => Navigator.pop(context, _res[i].punto),
+                        onTap: () => _elegir(_res[i]),
                       ),
                     ),
             ),

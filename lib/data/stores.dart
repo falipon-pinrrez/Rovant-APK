@@ -30,6 +30,9 @@ class AjustesStore extends ChangeNotifier {
   String nombre = 'Conductor';
   bool onboardingVisto = false;
   String avatar = 'assets/personajes/azul.png';
+  /// Vehículo que se ve en el mapa (assets/vehiculos/<nombre>.png).
+  String vehiculo = 'carro';
+  final Map<String, String> _lugares = {}; // casa / trabajo -> "lat|lng|nombre"
 
   Future<void> load() async {
     _p = await SharedPreferences.getInstance();
@@ -41,6 +44,11 @@ class AjustesStore extends ChangeNotifier {
     nombre = _p.getString('nombre') ?? 'Conductor';
     onboardingVisto = _p.getBool('onboardingVisto') ?? false;
     avatar = _p.getString('avatar') ?? avatar;
+    vehiculo = _p.getString('vehiculo') ?? vehiculo;
+    for (final k in const ['casa', 'trabajo']) {
+      final v = _p.getString('lugar_$k');
+      if (v != null) _lugares[k] = v;
+    }
   }
 
   void setTheme(ThemeMode m) {
@@ -82,6 +90,32 @@ class AjustesStore extends ChangeNotifier {
   void setAvatar(String a) {
     avatar = a;
     _p.setString('avatar', a);
+    notifyListeners();
+  }
+
+  void setVehiculo(String v) {
+    vehiculo = v;
+    _p.setString('vehiculo', v);
+    notifyListeners();
+  }
+
+  /// Lugar guardado (casa o trabajo): (lat, lng, nombre) o null.
+  (double, double, String)? lugar(String clave) {
+    final v = _lugares[clave];
+    if (v == null) return null;
+    final partes = v.split('|');
+    return (double.parse(partes[0]), double.parse(partes[1]), partes.sublist(2).join('|'));
+  }
+
+  void guardarLugar(String clave, double lat, double lng, String nombre) {
+    _lugares[clave] = '$lat|$lng|$nombre';
+    _p.setString('lugar_$clave', _lugares[clave]!);
+    notifyListeners();
+  }
+
+  void borrarLugar(String clave) {
+    _lugares.remove(clave);
+    _p.remove('lugar_$clave');
     notifyListeners();
   }
 

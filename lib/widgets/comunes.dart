@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/reporte.dart';
 import '../theme.dart';
 
-/// Logotipo Rovant: flecha de navegación + nombre.
+/// Logotipo Rovant (azul marino en tema claro, blanco en oscuro).
 class LogoRovant extends StatelessWidget {
   const LogoRovant({super.key, this.alto = 44, this.forzarBlanco = false});
   final double alto;
@@ -13,21 +13,11 @@ class LogoRovant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final blanco = forzarBlanco || context.rs.oscuro;
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      Transform.rotate(
-        angle: -0.6,
-        child: Icon(Icons.navigation_rounded, size: alto * 0.8, color: const Color(0xFF2F8CFF)),
-      ),
-      SizedBox(width: alto * 0.08),
-      Text('Rovant',
-          style: TextStyle(
-            fontSize: alto * 0.9,
-            height: 1,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -alto * 0.03,
-            color: blanco ? Colors.white : const Color(0xFF13213A),
-          )),
-    ]);
+    return Image.asset(
+      blanco ? 'assets/logo_oscuro.png' : 'assets/logo_claro.png',
+      height: alto,
+      fit: BoxFit.contain,
+    );
   }
 }
 

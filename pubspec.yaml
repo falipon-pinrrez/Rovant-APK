@@ -38,6 +38,8 @@ flutter:
   assets:
     - assets/
     - assets/personajes/
+    - assets/vehiculos/
+    - assets/iconos/
 
 flutter_launcher_icons:
   android: true

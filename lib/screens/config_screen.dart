@@ -63,6 +63,15 @@ class ConfigScreen extends StatelessWidget {
         const _Seccion('Aplicación'),
         _Grupo(children: [
           _Fila(
+            icono: Icons.directions_car_rounded,
+            texto: 'Tu vehículo en el mapa',
+            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+              Image.asset('assets/vehiculos/${aj.vehiculo}.png', height: 30),
+              Icon(Icons.chevron_right_rounded, color: c.texto3),
+            ]),
+            onTap: () => _elegirVehiculo(context, aj),
+          ),
+          _Fila(
               icono: Icons.dark_mode_rounded,
               texto: 'Tema',
               valor: temaTxt,
@@ -157,6 +166,54 @@ class ConfigScreen extends StatelessWidget {
                   },
                   child: Avatar(a,
                       tam: 72, anillo: a == aj.avatar ? ctx.rs.accion : null),
+                ),
+            ]),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  void _elegirVehiculo(BuildContext context, AjustesStore aj) {
+    const opciones = [
+      ('carro', 'Carro'),
+      ('moto', 'Moto'),
+      ('taxi', 'Taxi'),
+      ('van', 'Camioneta'),
+      ('bus', 'Bus'),
+      ('bici', 'Bicicleta'),
+    ];
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text('¿En qué te mueves?',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 16),
+            Wrap(spacing: 12, runSpacing: 12, alignment: WrapAlignment.center, children: [
+              for (final (id, nombre) in opciones)
+                GestureDetector(
+                  onTap: () {
+                    aj.setVehiculo(id);
+                    Navigator.pop(ctx);
+                  },
+                  child: Container(
+                    width: 92,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: aj.vehiculo == id ? ctx.rs.suave : ctx.rs.elevada,
+                      borderRadius: BorderRadius.circular(RS.r14),
+                      border: Border.all(
+                          color: aj.vehiculo == id ? ctx.rs.accion : Colors.transparent, width: 2),
+                    ),
+                    child: Column(children: [
+                      Image.asset('assets/vehiculos/$id.png', height: 56),
+                      const SizedBox(height: 6),
+                      Text(nombre, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                    ]),
+                  ),
                 ),
             ]),
           ]),
