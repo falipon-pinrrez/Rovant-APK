@@ -1,0 +1,48 @@
+name: rovant
+description: "Rovant – navegación con reportes de voz (estilo Waze con audios)."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  shared_preferences: ^2.3.3
+  path_provider: ^2.1.5
+  http: ^1.2.2
+  google_fonts: ^6.2.1
+  # Mapa (OpenStreetMap, sin API key)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geolocator: ^13.0.2
+  # Audio: grabar, reproducir y voz
+  record: ^5.2.0
+  audioplayers: ^6.1.0
+  flutter_tts: ^4.2.0
+  # Fotos y compartir
+  image_picker: ^1.1.2
+  share_plus: ^10.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/personajes/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icono.png"
+  adaptive_icon_background: "#1B2433"
+  adaptive_icon_foreground: "assets/icono_fg.png"
+  remove_alpha_ios: true

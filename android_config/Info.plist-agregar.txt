@@ -1,0 +1,10 @@
+Solo si vas a compilar para iPhone: agrega esto dentro de <dict> en ios/Runner/Info.plist
+
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Rovant usa tu ubicación para navegar y avisarte de reportes cercanos.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Rovant usa el micrófono para grabar reportes de voz.</string>
+<key>NSCameraUsageDescription</key>
+<string>Rovant usa la cámara para adjuntar fotos a tus reportes.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Rovant usa tus fotos para adjuntarlas a los reportes.</string>

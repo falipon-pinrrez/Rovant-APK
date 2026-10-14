@@ -1,0 +1,37 @@
+format_version: "13"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: flutter
+workflows:
+  build-apk:
+    steps:
+    - git-clone@8: {}
+    - flutter-installer@0:
+        inputs:
+        - version: stable
+        - is_update: "true"
+    - script@1:
+        title: Compilar APK Rovant
+        inputs:
+        - content: |-
+            set -exo pipefail
+            SRC="$BITRISE_SOURCE_DIR"
+            cd /tmp
+            flutter create --org com.rovant --project-name rovant --platforms android,ios rovant_app
+            rm -rf rovant_app/lib rovant_app/test
+            cp -r "$SRC/lib" "$SRC/assets" "$SRC/pubspec.yaml" rovant_app/
+            cp "$SRC/android_config/AndroidManifest.xml" rovant_app/android/app/src/main/AndroidManifest.xml
+            cd rovant_app
+            G=android/app/build.gradle.kts; [ -f "$G" ] || G=android/app/build.gradle
+            sed -i -E 's/minSdk( =|) *flutter\.minSdkVersion/minSdk\1 23/; s/minSdkVersion flutter\.minSdkVersion/minSdkVersion 23/' "$G"
+            grep -n minSdk "$G" || true
+            flutter pub get
+            dart run flutter_launcher_icons
+            flutter build apk --release
+            cp build/app/outputs/flutter-apk/app-release.apk "$BITRISE_DEPLOY_DIR/Rovant.apk"
+    - deploy-to-bitrise-io@2:
+        inputs:
+        - deploy_path: $BITRISE_DEPLOY_DIR/Rovant.apk
+meta:
+  bitrise.io:
+    stack: linux-docker-android-22.04
+    machine_type_id: standard
