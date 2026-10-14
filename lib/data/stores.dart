@@ -10,7 +10,19 @@ import '../models/reporte.dart';
 class AjustesStore extends ChangeNotifier {
   late SharedPreferences _p;
 
-  ThemeMode themeMode = ThemeMode.dark;
+  /// Elección del usuario. ThemeMode.system = automático por hora.
+  ThemeMode themeMode = ThemeMode.system;
+
+  /// Claro de 6:00 a. m. a 5:59 p. m.; oscuro de 6:00 p. m. a 5:59 a. m.
+  static bool esDeNoche([DateTime? t]) {
+    final h = (t ?? DateTime.now()).hour;
+    return h >= 18 || h < 6;
+  }
+
+  /// Tema que se aplica en este momento.
+  ThemeMode get temaEfectivo => themeMode == ThemeMode.system
+      ? (esDeNoche() ? ThemeMode.dark : ThemeMode.light)
+      : themeMode;
   bool notificaciones = true;
   bool audioAuto = true; // reproducir audios de reportes cercanos
   bool vozNavegacion = true; // instrucciones de giro habladas
@@ -21,7 +33,7 @@ class AjustesStore extends ChangeNotifier {
 
   Future<void> load() async {
     _p = await SharedPreferences.getInstance();
-    themeMode = ThemeMode.values[_p.getInt('themeMode') ?? ThemeMode.dark.index];
+    themeMode = ThemeMode.values[_p.getInt('tema') ?? ThemeMode.system.index];
     notificaciones = _p.getBool('notificaciones') ?? true;
     audioAuto = _p.getBool('audioAuto') ?? true;
     vozNavegacion = _p.getBool('vozNavegacion') ?? true;
@@ -33,7 +45,7 @@ class AjustesStore extends ChangeNotifier {
 
   void setTheme(ThemeMode m) {
     themeMode = m;
-    _p.setInt('themeMode', m.index);
+    _p.setInt('tema', m.index);
     notifyListeners();
   }
 

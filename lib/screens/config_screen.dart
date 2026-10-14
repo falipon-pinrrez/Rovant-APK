@@ -17,7 +17,7 @@ class ConfigScreen extends StatelessWidget {
     final temaTxt = switch (aj.themeMode) {
       ThemeMode.dark => 'Oscuro',
       ThemeMode.light => 'Claro',
-      ThemeMode.system => 'Sistema',
+      ThemeMode.system => 'Automático',
     };
 
     return Scaffold(
@@ -187,9 +187,9 @@ class ConfigScreen extends StatelessWidget {
       builder: (ctx) => SafeArea(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           for (final (m, t) in const [
-            (ThemeMode.dark, 'Oscuro'),
-            (ThemeMode.light, 'Claro'),
-            (ThemeMode.system, 'Según el sistema'),
+            (ThemeMode.system, 'Automático (claro 6 a. m. · oscuro 6 p. m.)'),
+            (ThemeMode.light, 'Siempre claro'),
+            (ThemeMode.dark, 'Siempre oscuro'),
           ])
             ListTile(
               title: Text(t),

@@ -358,14 +358,13 @@ class _MapaScreenState extends State<MapaScreen> {
             onLongPress: (_, p) => _elegirDestino(p),
           ),
           children: [
+            // Mapas de OpenStreetMap: gratis y sin API key.
+            // En tema oscuro se invierten los colores del mapa.
             TileLayer(
-              key: ValueKey(c.oscuro),
-              urlTemplate: c.oscuro
-                  ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-                  : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-              subdomains: const ['a', 'b', 'c', 'd'],
-              retinaMode: RetinaMode.isHighDensity(context),
-              userAgentPackageName: 'com.rovant.app',
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.rovant.rovant',
+              maxNativeZoom: 19,
+              tileBuilder: c.oscuro ? darkModeTileBuilder : null,
             ),
             if (ruta != null)
               PolylineLayer(polylines: [
@@ -477,7 +476,7 @@ class _MapaScreenState extends State<MapaScreen> {
         Positioned(
           right: 12,
           bottom: 104,
-          child: Text('© OpenStreetMap · © CARTO',
+          child: Text('© OpenStreetMap',
               style: TextStyle(fontSize: 9, color: c.texto3)),
         ),
 

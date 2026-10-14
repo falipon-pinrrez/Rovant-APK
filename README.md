@@ -14,6 +14,7 @@ Usa la guía de color de los mockups: tema oscuro dorado y tema claro azul.
 | **Grabar audio rápido** | Botón verde de micrófono: graba hasta 60 s y publica en tu ubicación |
 | **Reportes** | Lista con filtros por categoría |
 | **Detalle** | Reproductor (play/pausa, ±10 s, barra), foto, compartir, ver en mapa, eliminar |
+| **Tema** | Automático por hora: claro de 6 a. m. a 6 p. m., oscuro de 6 p. m. a 6 a. m. (se puede fijar en Configuración) |
 | **Configuración** | Personaje, nombre, notificaciones, tema, alertas con audio, voz de navegación, distancia de alerta, ayuda, términos |
 
 ## Compilar el APK
@@ -64,7 +65,7 @@ Para que todos los conductores vean los audios de los demás, conecta `ReportesS
 
 ## Servicios externos (gratis, sin API key)
 
-- Mapas: teselas de CARTO sobre datos de © OpenStreetMap.
+- Mapas: teselas estándar de © OpenStreetMap (sin API key; en tema oscuro se invierten los colores).
 - Rutas: servidor público de demostración de OSRM. Para producción monta tu propio OSRM o usa GraphHopper o Mapbox.
 - Búsqueda y direcciones: Nominatim (máximo 1 petición por segundo).
 

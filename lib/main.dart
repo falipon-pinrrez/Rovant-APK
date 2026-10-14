@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +25,29 @@ Future<void> main() async {
   ));
 }
 
-class RovantApp extends StatelessWidget {
+class RovantApp extends StatefulWidget {
   const RovantApp({super.key});
+  @override
+  State<RovantApp> createState() => _RovantAppState();
+}
+
+class _RovantAppState extends State<RovantApp> {
+  Timer? _reloj;
+
+  @override
+  void initState() {
+    super.initState();
+    // Revisa cada minuto si ya son las 6 a. m. o las 6 p. m. para cambiar el tema.
+    _reloj = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _reloj?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +57,7 @@ class RovantApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: buildTheme(Brightness.light),
       darkTheme: buildTheme(Brightness.dark),
-      themeMode: aj.themeMode,
+      themeMode: aj.temaEfectivo,
       home: aj.onboardingVisto ? const HomeShell() : const InicioScreen(),
     );
   }
