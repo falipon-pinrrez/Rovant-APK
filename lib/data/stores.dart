@@ -29,9 +29,9 @@ class AjustesStore extends ChangeNotifier {
   int radioAlerta = 400; // metros
   String nombre = 'Conductor';
   bool onboardingVisto = false;
-  String avatar = 'assets/personajes/azul.png';
+  String avatar = 'assets/personajes/hola.png';
   /// Vehículo que se ve en el mapa (assets/vehiculos/<nombre>.png).
-  String vehiculo = 'carro';
+  String vehiculo = 'rovi';
   final Map<String, String> _lugares = {}; // casa / trabajo -> "lat|lng|nombre"
 
   Future<void> load() async {
@@ -42,9 +42,9 @@ class AjustesStore extends ChangeNotifier {
     vozNavegacion = _p.getBool('vozNavegacion') ?? true;
     radioAlerta = _p.getInt('radioAlerta') ?? 400;
     nombre = _p.getString('nombre') ?? 'Conductor';
-    onboardingVisto = _p.getBool('onboardingVisto') ?? false;
-    avatar = _p.getString('avatar') ?? avatar;
-    vehiculo = _p.getString('vehiculo') ?? vehiculo;
+    onboardingVisto = _p.getBool('onboarding2') ?? false;
+    avatar = _p.getString('avatar2') ?? avatar;
+    vehiculo = _p.getString('vehiculo2') ?? vehiculo;
     for (final k in const ['casa', 'trabajo']) {
       final v = _p.getString('lugar_$k');
       if (v != null) _lugares[k] = v;
@@ -89,13 +89,13 @@ class AjustesStore extends ChangeNotifier {
 
   void setAvatar(String a) {
     avatar = a;
-    _p.setString('avatar', a);
+    _p.setString('avatar2', a);
     notifyListeners();
   }
 
   void setVehiculo(String v) {
     vehiculo = v;
-    _p.setString('vehiculo', v);
+    _p.setString('vehiculo2', v);
     notifyListeners();
   }
 
@@ -121,7 +121,7 @@ class AjustesStore extends ChangeNotifier {
 
   void marcarOnboarding() {
     onboardingVisto = true;
-    _p.setBool('onboardingVisto', true);
+    _p.setBool('onboarding2', true);
     notifyListeners();
   }
 }

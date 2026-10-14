@@ -217,6 +217,7 @@ class _MapaScreenState extends State<MapaScreen> {
 
     if (esUltimo && dp < 30) {
       if (aj.vozNavegacion) Voz.instancia.decir('Llegaste a tu destino');
+      avisoRovi(context, '¡Llegaste a tu destino!', sticker: 'bandera');
       _cancelarRuta();
       return;
     }
@@ -281,7 +282,7 @@ class _MapaScreenState extends State<MapaScreen> {
   void _publicar(Reporte r) {
     _alertados.add(r.id); // no te alertes de tu propio reporte
     _store.agregar(r);
-    _aviso('¡Reporte enviado! Gracias por cuidar la vía.');
+    avisoRovi(context, '¡Reporte enviado! Gracias por cuidar la vía.', sticker: 'celebra');
   }
 
   Future<void> _elegirDestino(LatLng p) async {
@@ -541,8 +542,8 @@ class _MiMarcador extends StatelessWidget {
             shape: BoxShape.circle, color: c.accion.withValues(alpha: 0.18)),
       ),
       Transform.rotate(
-        angle: rumbo * pi / 180,
-        child: Image.asset('assets/vehiculos/$vehiculo.png', height: 54,
+        angle: vehiculo == 'rovi' ? 0 : rumbo * pi / 180,
+        child: Image.asset('assets/vehiculos/$vehiculo.png', height: vehiculo == 'rovi' ? 58 : 54,
             errorBuilder: (_, __, ___) =>
                 Icon(Icons.navigation_rounded, color: c.accion, size: 40)),
       ),
@@ -866,12 +867,16 @@ class _BuscarSheetState extends State<_BuscarSheet> {
                   ? Center(
                       child: Padding(
                         padding: const EdgeInsets.all(24),
-                        child: Text(
+                        child: Column(mainAxisSize: MainAxisSize.min, children: [
+                          const Sticker('mapa', alto: 110),
+                          const SizedBox(height: 10),
+                          Text(
                             _guardando != null
                                 ? 'Busca la dirección y tócala para guardarla como ${_guardando == 'casa' ? 'Casa' : 'Trabajo'}.'
                                 : 'Escribe y presiona buscar, o usa un atajo.\nTambién puedes mantener presionado el mapa para elegir un destino.',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: c.texto2)),
+                        ]),
                       ),
                     )
                   : ListView.separated(

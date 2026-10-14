@@ -64,7 +64,7 @@ class ConfigScreen extends StatelessWidget {
         _Grupo(children: [
           _Fila(
             icono: Icons.directions_car_rounded,
-            texto: 'Tu vehículo en el mapa',
+            texto: 'Cómo te ves en el mapa',
             trailing: Row(mainAxisSize: MainAxisSize.min, children: [
               Image.asset('assets/vehiculos/${aj.vehiculo}.png', height: 30),
               Icon(Icons.chevron_right_rounded, color: c.texto3),
@@ -139,7 +139,7 @@ class ConfigScreen extends StatelessWidget {
         const SizedBox(height: 24),
         const Center(child: LogoRovant(alto: 26)),
         const SizedBox(height: 6),
-        Center(child: Text('Versión 1.0.0', style: TextStyle(color: c.texto3, fontSize: 12))),
+        Center(child: Text('Versión 1.1.0', style: TextStyle(color: c.texto3, fontSize: 12))),
       ]),
     );
   }
@@ -176,6 +176,7 @@ class ConfigScreen extends StatelessWidget {
 
   void _elegirVehiculo(BuildContext context, AjustesStore aj) {
     const opciones = [
+      ('rovi', 'Rovi'),
       ('carro', 'Carro'),
       ('moto', 'Moto'),
       ('taxi', 'Taxi'),

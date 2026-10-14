@@ -21,6 +21,29 @@ class LogoRovant extends StatelessWidget {
   }
 }
 
+/// Sticker de Rovi, la mascota (assets/stickers/<nombre>.png).
+class Sticker extends StatelessWidget {
+  const Sticker(this.nombre, {super.key, this.alto = 120});
+  final String nombre;
+  final double alto;
+  @override
+  Widget build(BuildContext context) => Image.asset('assets/stickers/$nombre.png',
+      height: alto, fit: BoxFit.contain, errorBuilder: (_, __, ___) => SizedBox(height: alto));
+}
+
+/// Mensaje flotante con un sticker de Rovi.
+void avisoRovi(BuildContext context, String texto, {String sticker = 'pulgar'}) {
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+      content: Row(children: [
+        Sticker(sticker, alto: 44),
+        const SizedBox(width: 12),
+        Expanded(child: Text(texto)),
+      ]),
+    ));
+}
+
 /// Botón principal en pastilla (degradado dorado en oscuro / azul en claro).
 class BotonPrincipal extends StatelessWidget {
   const BotonPrincipal(

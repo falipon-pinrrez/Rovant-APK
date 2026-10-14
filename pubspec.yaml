@@ -1,7 +1,7 @@
 name: rovant
-description: "Rovant – navegación con reportes de voz (estilo Waze con audios)."
+description: "Rovant – tu camino, más simple. Navegación con reportes de voz."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: '>=3.6.0 <4.0.0'
@@ -40,11 +40,12 @@ flutter:
     - assets/personajes/
     - assets/vehiculos/
     - assets/iconos/
+    - assets/stickers/
 
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icono.png"
-  adaptive_icon_background: "#1B2433"
+  adaptive_icon_background: "#1E7BF2"
   adaptive_icon_foreground: "assets/icono_fg.png"
   remove_alpha_ios: true

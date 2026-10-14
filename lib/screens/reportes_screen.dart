@@ -43,7 +43,7 @@ class _ReportesScreenState extends State<ReportesScreen> {
           child: lista.isEmpty
               ? Center(
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(Icons.inbox_rounded, size: 54, color: c.texto3),
+                    const Sticker('duda', alto: 120),
                     const SizedBox(height: 10),
                     Text('No hay reportes por aquí', style: TextStyle(color: c.texto2)),
                   ]),
